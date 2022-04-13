@@ -46,6 +46,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Camera theCamera;
     private Rigidbody myRigid;
+    private GunController theGunController;
+
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +55,7 @@ public class PlayerController : MonoBehaviour
         capsuleCollider = GetComponent<CapsuleCollider>();
         myRigid = GetComponent<Rigidbody>();
         applySpeed = WalkSpeed;
+        theGunController = FindObjectOfType<GunController>();
 
         //초기화
         originPosY = theCamera.transform.localPosition.y; // 왜 로컬 포지션이냐? 카메라 월드 상대적 기준이라서 local이다. 
@@ -63,9 +66,9 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         IsGrounded();
-        TryJump();
+        TryJump(); // Jump 포함
         TryRun();
-        TryCrouch();
+        TryCrouch(); //Crouch 까지 포함
         Move();
         CameraRotation();
         CharacterRotation();
@@ -80,19 +83,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //앉기동작
+    //앉기동작- C를 누른 상황에서만 작동되는 함수
     private void Crouch()
     {
         isCrouch = !isCrouch;   //isCrouch가 트루일때 false로 바꿔주고.  false면 true로 바꿔주고...!
-        //if (isCrouch)
-        //{
-        //    isCrouch = false;
-        //}
-        //else
-        //{
-        //    isCrouch = true;
-        //}
-
+      
         if (isCrouch)
         {
             applySpeed = crouchSpeed;
@@ -166,6 +161,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
         {
             Running();
+            theGunController.CancleFineSight();
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -180,7 +176,9 @@ public class PlayerController : MonoBehaviour
         if (isCrouch)
         {
             Crouch();
+            theGunController.CancleFineSight();
         }
+
         isRun = true;
         applySpeed = runSpeed; // runspeed로 대입해서 
     }
@@ -210,7 +208,6 @@ public class PlayerController : MonoBehaviour
         //강체에 movePosition함수를 사용해서 해당obj에 접근해 transfrom.posion에 velocity를 더하고 시간과 비슷하도록 time.deltatime으로 딜레이?를 넣는다. 
         //강체에 movePosition함수를 사용해서 해당obj에 접근해 transfrom.posion에 velocity를 더하고 시간과 비슷하도록 time.deltatime으로 딜레이?를 넣는다. 
         myRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
-
     }
 
     //좌우 캐릭터 회전

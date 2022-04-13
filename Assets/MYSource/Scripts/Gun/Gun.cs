@@ -17,6 +17,7 @@ public class Gun : MonoBehaviour
     public int maxBulletCount; //최대 소유가능 총알 갯수
     public int carryBulletCount; // 현재 소유하고 있는 총알 갯수
 
+
     public float retroActionForce; //반동세기
     public float retroActionFineSightForce; // 정조준시의 반동 세기
 
