@@ -18,9 +18,13 @@ public class PlayerController : MonoBehaviour
     private float jumpForce;
 
     //상태변수
+    private bool isWalk = false;
     private bool isRun = false;
-    private bool isGrounded = true;  //땅에서 시작이니 true로 시작 땅이 아니라면 점프 하지 못하게 막는다..!
+    private bool isGround = true;  //땅에서 시작이니 true로 시작 땅이 아니라면 점프 하지 못하게 막는다..!
     private bool isCrouch = true;
+
+    //움직임 체크변수 - 전프레임의 현재 위치, 후프레임의 현재 위치를 체크하는 v3 변수
+    private Vector3 lastPos;
 
     //앉았을때 얼마나 앉을지 결정하는 변수
     [SerializeField]
@@ -47,6 +51,8 @@ public class PlayerController : MonoBehaviour
     private Camera theCamera;
     private Rigidbody myRigid;
     private GunController theGunController;
+    private CrossHair theCrossHair;
+
 
 
     // Start is called before the first frame update
@@ -54,12 +60,13 @@ public class PlayerController : MonoBehaviour
     {
         capsuleCollider = GetComponent<CapsuleCollider>();
         myRigid = GetComponent<Rigidbody>();
-        applySpeed = WalkSpeed;
         theGunController = FindObjectOfType<GunController>();
+        theCrossHair = FindObjectOfType<CrossHair>();
 
         //초기화
         originPosY = theCamera.transform.localPosition.y; // 왜 로컬 포지션이냐? 카메라 월드 상대적 기준이라서 local이다. 
         applyCrouchPosY = originPosY;  //기본 서있는 상태도록. 
+        applySpeed = WalkSpeed;
 
     }
 
@@ -70,8 +77,10 @@ public class PlayerController : MonoBehaviour
         TryRun();
         TryCrouch(); //Crouch 까지 포함
         Move();
+        MoveCheck();
         CameraRotation();
         CharacterRotation();
+
     }
 
     //앉기시도
@@ -87,7 +96,8 @@ public class PlayerController : MonoBehaviour
     private void Crouch()
     {
         isCrouch = !isCrouch;   //isCrouch가 트루일때 false로 바꿔주고.  false면 true로 바꿔주고...!
-      
+        theCrossHair.CrouchingAnimation(isCrouch);
+
         if (isCrouch)
         {
             applySpeed = crouchSpeed;
@@ -110,13 +120,13 @@ public class PlayerController : MonoBehaviour
         int count = 0;
 
 
-        while(_posY != applyCrouchPosY)  //1프레임마다 이 과정을 실행시켜주고ㅡ posY가 목적지까지 가게 된다면 while을 만족시켜 빠져나온다..
+        while (_posY != applyCrouchPosY)  //1프레임마다 이 과정을 실행시켜주고ㅡ posY가 목적지까지 가게 된다면 while을 만족시켜 빠져나온다..
         {
             count++;
             //보간함수
             _posY = Mathf.Lerp(_posY, applyCrouchPosY, 0.1f);
-            theCamera.transform.localPosition = new Vector3(0,_posY, 0);
-            if(count>15)
+            theCamera.transform.localPosition = new Vector3(0, _posY, 0);
+            if (count > 15)
             {
                 break;
             }
@@ -129,13 +139,14 @@ public class PlayerController : MonoBehaviour
     private void IsGrounded()
     { //고정된 좌표에 다가 광선을 쏠꺼야. 
         //캡슐콜라이더의 바운드에 extents의 half에 y값만큼 레이저를 주고 쏠꺼야. 
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.1f);
+        isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollider.bounds.extents.y + 0.1f);
+        theCrossHair.RunningAnimation(!isGround);
     }
 
     //점프시도
     private void TryJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && isGround)
         {
             Jump();
         }
@@ -145,11 +156,11 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         //앉은키로 점프한다면 , 앉은상태 초기화
-        if(isCrouch)
+        if (isCrouch)
         {
             Crouch();
         }
-        
+
         //내 리지드가 움직이고 있는 속도에  순간적으로 위로 옮긴다 = 점프
         myRigid.velocity = transform.up * jumpForce;
 
@@ -180,6 +191,7 @@ public class PlayerController : MonoBehaviour
         }
 
         isRun = true;
+        theCrossHair.RunningAnimation(isRun);
         applySpeed = runSpeed; // runspeed로 대입해서 
     }
 
@@ -187,6 +199,7 @@ public class PlayerController : MonoBehaviour
     private void RunningCancel()
     {
         isRun = false;
+        theCrossHair.RunningAnimation(isRun);
         applySpeed = WalkSpeed; // 다시 walkspeed로 변경해준다.
     }
 
@@ -208,6 +221,25 @@ public class PlayerController : MonoBehaviour
         //강체에 movePosition함수를 사용해서 해당obj에 접근해 transfrom.posion에 velocity를 더하고 시간과 비슷하도록 time.deltatime으로 딜레이?를 넣는다. 
         //강체에 movePosition함수를 사용해서 해당obj에 접근해 transfrom.posion에 velocity를 더하고 시간과 비슷하도록 time.deltatime으로 딜레이?를 넣는다. 
         myRigid.MovePosition(transform.position + _velocity * Time.deltaTime);
+    }
+
+    private void MoveCheck()
+    {
+        if (!isRun && !isCrouch && isGround)
+        {
+            //한 프레임 체크, 한프레임 체크 해서 전,현재 위치 비교하는 함수
+            //오차(약간의 경사면)을 잡아주는 조건문
+            if(Vector3.Distance(lastPos,transform.position) >= 0.01f) // (lastPos != transform.position)
+            {
+                isWalk = true;
+            }
+            else
+            {
+                isWalk = false;
+            }
+            theCrossHair.WalkingAnimation(isWalk);
+            lastPos = transform.position;
+        }
     }
 
     //좌우 캐릭터 회전

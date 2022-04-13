@@ -19,6 +19,9 @@ public class GunController : MonoBehaviour
 
     //본래 포지션 값
     private Vector3 originPos;
+    private Vector3 camerapos;
+
+
     //효과음 재생
     private AudioSource audioSource;
 
@@ -29,13 +32,18 @@ public class GunController : MonoBehaviour
     //필요한 컴포넌트
     [SerializeField]
     private Camera theCam;
+    [SerializeField]
+    private CrossHair theCrossHair;
+
     //피격이펙트
     public GameObject hit_effect_prefab;
 
     private void Start()
     {
         originPos = Vector3.zero;
+        camerapos = Vector3.zero;
         audioSource = GetComponent<AudioSource>();
+        theCrossHair = FindObjectOfType<CrossHair>();
     }
 
     private void Update()
@@ -87,6 +95,7 @@ public class GunController : MonoBehaviour
     //발사 후 계산
     private void Shoot() 
     {
+        theCrossHair.FireAnimation();
         currentGun.currentBulletCount--;
         currentFireRate = currentGun.fireRate; //연사 속도 재계산
         PlayerSE(currentGun.fire_Sound);
@@ -98,8 +107,12 @@ public class GunController : MonoBehaviour
     }
 
     private void Hit()
-    { 
-        if(Physics.Raycast(theCam.transform.position, theCam.transform.forward, out hitInfo, currentGun.range))
+    {//x 축, y 축을 다 random으로 
+        if (Physics.Raycast(theCam.transform.position, theCam.transform.forward +
+            new Vector3(Random.Range(-theCrossHair.GetAccuracy() - currentGun.accuracy, theCrossHair.GetAccuracy() + currentGun.accuracy),
+                        Random.Range(-theCrossHair.GetAccuracy() - currentGun.accuracy, theCrossHair.GetAccuracy() + currentGun.accuracy),
+                        0)
+            , out hitInfo, currentGun.range))
         {//개체를 바라보는 
             var clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
             Destroy(clone, 2f); 
@@ -175,7 +188,10 @@ public class GunController : MonoBehaviour
     private void FineSight()
     {
         isFineSightMode = !isFineSightMode; //  isFineSightMode = true;  의 뜻 똒같은 뜻이다. 자동화 버전       }
+
         currentGun.anim.SetBool("FindSightMode", isFineSightMode);
+        theCrossHair.FineSightAnimation(isFineSightMode);
+
         if (isFineSightMode)
         {
             StopAllCoroutines();
@@ -268,6 +284,12 @@ public class GunController : MonoBehaviour
     {
         return currentGun;
     }
+    
+    public bool GetFineSightMode()
+    {
+        return isFineSightMode;
+    }
+
 
 }
 
