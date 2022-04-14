@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class CrossHair : MonoBehaviour
 {
-    private const float WALKING_FIRE = 0.08f, STANDIND_FIRE = 0.04f, CROUCHING_FIRE = 0.02f, FINESIGHT_FIRE = 0.05f;
+
+
+    private const float WALKING_FIRE = 0.08f, STANDING_FIRE = 0.04f, CROUCHING_FIRE = 0.02f, FINESIGHT_FIRE = 0.001f;
 
     [SerializeField]
     private Animator animator;
 
-    //크로스 헤어 상태의 따른 총의 정확도
+
+    // 크로스헤어 상태에 따른 총의 정확도.
     private float gunAccuracy;
 
-    //크로스 헤어 비활성화를 위한 부모 객체
+
+    // 크로스 헤어 비활성화를 위한 부모 객체.
     [SerializeField]
     private GameObject go_CrossHairHUD;
     [SerializeField]
@@ -20,60 +24,54 @@ public class CrossHair : MonoBehaviour
 
     public void WalkingAnimation(bool _flag)
     {
+        WeaponManager.currentWeaponAnim.SetBool("Walk", _flag);
         animator.SetBool("Walking", _flag);
     }
+
     public void RunningAnimation(bool _flag)
+    {
+        WeaponManager.currentWeaponAnim.SetBool("Run", _flag);
+        animator.SetBool("Running", _flag);
+    }
+
+    public void JumpingAnimation(bool _flag)
     {
         animator.SetBool("Running", _flag);
     }
+
     public void CrouchingAnimation(bool _flag)
     {
         animator.SetBool("Crouching", _flag);
     }
+
     public void FineSightAnimation(bool _flag)
     {
         animator.SetBool("FineSight", _flag);
     }
 
 
-
-
     public void FireAnimation()
     {
-        if(animator.GetBool("Walking"))
-        {
+        if (animator.GetBool("Walking"))
             animator.SetTrigger("Walk_Fire");
-        }
-        else if(animator.GetBool("Crouching"))
-        {
+        else if (animator.GetBool("Crouching"))
             animator.SetTrigger("Crouch_Fire");
-        }
         else
-        {
             animator.SetTrigger("Idle_Fire");
-        }
     }
-
 
     public float GetAccuracy()
     {
         if (animator.GetBool("Walking"))
-        {
-            gunAccuracy = 0.08f;
-        }
+            gunAccuracy = 0.06f;
         else if (animator.GetBool("Crouching"))
-        {
-            gunAccuracy = 0.02f;
-        }
-        else if(theGunController.GetFineSightMode())
-        {
+            gunAccuracy = 0.015f;
+        else if (theGunController.GetFineSightMode())
             gunAccuracy = 0.001f;
-        }
         else
-        {
-            gunAccuracy = 0.04f;
-        }
+            gunAccuracy = 0.035f;
 
         return gunAccuracy;
     }
+
 }
