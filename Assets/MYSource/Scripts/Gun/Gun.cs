@@ -29,6 +29,7 @@ public class Gun : MonoBehaviour
     public ParticleSystem muzzleFlash; // ÃÑ±¸ ¼¶±¤ ÆÄÆ¼Å¬
 
     public AudioClip fire_Sound;
+    public AudioClip empty_BulletSound;
 
     private void Start()
     {

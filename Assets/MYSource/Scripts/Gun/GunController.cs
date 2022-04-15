@@ -26,6 +26,7 @@ public class GunController : MonoBehaviour
 
     //효과음 재생
     private AudioSource audioSource;
+    private AudioSource audioSource_M;
 
     //충돌한 객체의 정보를 받아옴
     private RaycastHit hitInfo;
@@ -175,6 +176,7 @@ public class GunController : MonoBehaviour
         {
             Debug.Log("소유한 총알이 없습니다.");
             //칙칙 소리 (총알이 없다의 소리)
+            PlaySEM(currentGun.empty_BulletSound);
         }
     }
 
@@ -292,6 +294,12 @@ public class GunController : MonoBehaviour
     {
         audioSource.clip = _clip;
         audioSource.Play();
+    }
+
+    private void PlaySEM(AudioClip _clip)
+    {
+        audioSource.clip = _clip;
+        audioSource.PlayDelayed(0.1f);
     }
 
     public Gun GetGun()
