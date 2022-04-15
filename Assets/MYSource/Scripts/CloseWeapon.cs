@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour
+public class CloseWeapon : MonoBehaviour
 {
     public string handName; //너클 or 맨손 구분
     public float range; // 공격범휘 
