@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     // 상태 변수
     private bool isWalk = false;
-    private bool isRun = false;
+    public bool isRun = false;
     private bool isCrouch = false;
     private bool isGround = true;
 

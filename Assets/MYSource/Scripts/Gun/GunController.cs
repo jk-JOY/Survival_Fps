@@ -10,14 +10,15 @@ public class GunController : MonoBehaviour
     //현재 장착된 총
     [SerializeField]
     private Gun currentGun;
-
+    private PlayerController playerController;
+    
     //연사 속도 계산
     private float currentFireRate;
 
     //상태변수
     private bool isReload = false;
     [HideInInspector]
-    private bool isFineSightMode = false; // true일 때만 정조준하도록 변경하는 bool값
+    public bool isFineSightMode = false; // true일 때만 정조준하도록 변경하는 bool값
 
     //본래 포지션 값
     private Vector3 originPos;
@@ -67,7 +68,6 @@ public class GunController : MonoBehaviour
         {
             currentFireRate -= Time.deltaTime; //1 초의 역수 60분의 1
         }
-
     }
 
     //발사시도
@@ -124,7 +124,6 @@ public class GunController : MonoBehaviour
         }
     }
 
-
     //재장전 시도
     private void TryReLoad()
     {//10발 재장전 했으면 10발 미만일때만 장전 가능하도록
@@ -134,7 +133,6 @@ public class GunController : MonoBehaviour
             StartCoroutine(ReloadCoroutine());
         }
     }
-
 
     public void CancleReload()
     {

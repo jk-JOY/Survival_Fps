@@ -2,9 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour
+public class CloseWeapon : MonoBehaviour
 {
-    public string handName; //너클 or 맨손 구분
+    public string closeWeaponName; //너클 or 맨손 구분 //근접 무기 이름
+
+    //웨폰 유형
+    public bool isHand; //손
+    public bool isAxe; //도끼
+    public bool isPickAxe; // 곡괭이
+
     public float range; // 공격범휘 
     public int damage; //공격력
     public float workSpeed; // 작업속도
