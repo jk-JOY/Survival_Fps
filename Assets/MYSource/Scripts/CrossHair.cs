@@ -4,17 +4,13 @@ using UnityEngine;
 
 public class CrossHair : MonoBehaviour
 {
-
-
     private const float WALKING_FIRE = 0.08f, STANDING_FIRE = 0.04f, CROUCHING_FIRE = 0.02f, FINESIGHT_FIRE = 0.001f;
 
     [SerializeField]
     private Animator animator;
 
-
     // 크로스헤어 상태에 따른 총의 정확도.
     private float gunAccuracy;
-
 
     // 크로스 헤어 비활성화를 위한 부모 객체.
     [SerializeField]

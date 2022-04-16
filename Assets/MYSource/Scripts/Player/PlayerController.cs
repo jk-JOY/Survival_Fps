@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
     // 앉기 동작
     private void Crouch()
     {
-        isCrouch = !isCrouch;
+        isCrouch = !isCrouch;  //Crouch가 실행될때마다 스스로를 반전 시키는 조건문. 
         theCrosshair.CrouchingAnimation(isCrouch);
 
         if (isCrouch)

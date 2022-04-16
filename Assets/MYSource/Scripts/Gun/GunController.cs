@@ -11,7 +11,8 @@ public class GunController : MonoBehaviour
     [SerializeField]
     private Gun currentGun;
     private PlayerController playerController;
-    
+    private CameraShake cameraShake;
+
     //연사 속도 계산
     private float currentFireRate;
 

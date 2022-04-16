@@ -14,6 +14,4 @@ public class CloseWeapon : MonoBehaviour
     public float attackDelayB;//공격 비활성화 시점
 
     public Animator anim; // 애니메이션
-
-
 }

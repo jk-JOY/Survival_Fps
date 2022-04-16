@@ -77,7 +77,6 @@ public class HandController : MonoBehaviour
         return false;
     }
 
-
     public void HandChange(CloseWeapon _hand)
     {
         if (WeaponManager.currentWeapon != null)

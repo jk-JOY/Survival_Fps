@@ -4,32 +4,44 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
-    public Camera mainCamera;
-    Vector3 cameraPos;
+    public static CameraShake instance;
 
-    [SerializeField] [Range(0.01f, 0.1f)] float shakeRange = 0.05f;
-    [SerializeField] [Range(0.1f, 1f)] float duration = 0.5f;
+    [SerializeField] float m_force = 0f; //흔들림 세기를 결정지을 변수
+    [SerializeField] Vector3 m_offset = Vector3.zero; //흔들릴 방향을 결정지을 벡터
 
-    public void Shake()
+    Quaternion m_originBot; 
+
+    private void Start()
     {
-        cameraPos = mainCamera.transform.position;
-        InvokeRepeating("StartShake", 0f, 0.005f);
-        Invoke("StopShake", duration);
+        m_originBot = transform.rotation;
     }
 
-    void StartShake()
+    public void Update()
     {
-        float cameraPosX = Random.value * shakeRange * 2 - shakeRange;
-        float cameraPosY = Random.value * shakeRange * 2 - shakeRange;
-        Vector3 cameraPos = mainCamera.transform.position;
-        cameraPos.x += cameraPosX;
-        cameraPos.y += cameraPosY;
-        mainCamera.transform.position = cameraPos;
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(ShakeCoroutine());
+        }
     }
 
-    void StopShake()
+    public IEnumerator ShakeCoroutine()
     {
-        CancelInvoke("StartShake");
-        mainCamera.transform.position = cameraPos;
+        Vector3 t_originEuler = transform.eulerAngles;
+
+        while(true)
+        {
+            float t_rotX = Random.Range(-m_offset.x, -m_offset.x);
+            float t_rotY = Random.Range(-m_offset.y, -m_offset.y);
+            float t_rotZ = Random.Range(-m_offset.z, -m_offset.z);
+
+            Vector3 t_rangdomRot = t_originEuler + new Vector3(t_rotX, t_rotY, t_rotZ);
+            Quaternion t_rot = Quaternion.Euler(t_rangdomRot);
+
+            while (Quaternion.Angle(transform.rotation, t_rot) >0.1f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, m_originBot, m_force * Time.deltaTime);
+                yield return null;
+            }
+        }
     }
-}
+} 
