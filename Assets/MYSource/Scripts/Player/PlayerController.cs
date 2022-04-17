@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
     // 스피드 조정 변수
     [SerializeField]
     private float walkSpeed;
@@ -12,12 +11,9 @@ public class PlayerController : MonoBehaviour
     private float runSpeed;
     [SerializeField]
     private float crouchSpeed;
-
     private float applySpeed;
-
     [SerializeField]
     private float jumpForce;
-
 
     // 상태 변수
     private bool isWalk = false;
@@ -25,10 +21,8 @@ public class PlayerController : MonoBehaviour
     private bool isCrouch = false;
     private bool isGround = true;
 
-
     // 움직임 체크 변수
     private Vector3 lastPos;
-
 
     // 앉았을 때 얼마나 앉을지 결정하는 변수.
     [SerializeField]
@@ -39,17 +33,14 @@ public class PlayerController : MonoBehaviour
     // 땅 착지 여부
     private CapsuleCollider capsuleCollider;
 
-
     // 민감도
     [SerializeField]
     private float lookSensitivity;
-
 
     // 카메라 한계
     [SerializeField]
     private float cameraRotationLimit;
     private float currentCameraRotationX = 0;
-
 
     //필요한 컴포넌트
     [SerializeField]
@@ -57,7 +48,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody myRigid;
     private GunController theGunController;
     private CrossHair theCrosshair;
-
 
     void Start()
     {
