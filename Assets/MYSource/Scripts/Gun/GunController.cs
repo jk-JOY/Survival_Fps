@@ -40,6 +40,7 @@ public class GunController : MonoBehaviour
 
     //피격이펙트
     public GameObject hit_effect_prefab;
+    public GameObject bulletMark;
 
     private void Start()
     {
@@ -123,6 +124,9 @@ public class GunController : MonoBehaviour
         {//개체를 바라보는 
             GameObject clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
             Destroy(clone, 2f);
+
+            GameObject clone2 = Instantiate(bulletMark, hitInfo.point, Quaternion.FromToRotation(Vector3.back, hitInfo.point.normalized));
+            Destroy(clone2, 3f);
         }
     }
 
@@ -297,6 +301,7 @@ public class GunController : MonoBehaviour
         audioSource.Play();
     }
 
+    //사운드 잔탄소리 재생
     private void PlaySEM(AudioClip _clip)
     {
         audioSource.clip = _clip;
