@@ -24,14 +24,12 @@ public class GunController : MonoBehaviour
     //본래 포지션 값
     private Vector3 originPos;
 
-
     //효과음 재생
     private AudioSource audioSource;
     private AudioSource audioSource_M;
 
     //충돌한 객체의 정보를 받아옴
     private RaycastHit hitInfo;
-
 
     //필요한 컴포넌트
     [SerializeField]

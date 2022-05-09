@@ -31,7 +31,6 @@ public class WeaponManager : MonoBehaviour
     [SerializeField]
     private CloseWeapon[] hands;
 
-
     // 관리 차원에서 쉽게 무기 접근이 가능하도록 만듦.
     private Dictionary<string, Gun> gunDictionary = new Dictionary<string, Gun>();
     private Dictionary<string, CloseWeapon> handDictionary = new Dictionary<string, CloseWeapon>();
